@@ -70,5 +70,3 @@ class TestMemoize(unittest.TestCase):
             spec.a_property
             mocked.asset_called_once()
 
-
-
