@@ -1,25 +1,74 @@
-Project Overview
+#!/usr/bin/env python3
+""" Unittest Test
+"""
+import unittest
+from parameterized import parameterized
+from unittest.mock import patch, Mock
+from utils import access_nested_map, get_json, memoize
 
-This project demonstrates the use of unit and integration testing in Python. The focus is on testing individual functions with unit tests and end-to-end code paths with integration tests. Key concepts such as mocking, parameterization, and fixtures are also covered.
 
-Learning Objectives
+class TestAccessNestedMap(unittest.TestCase):
+    ''' nested map test function '''
+    @parameterized.expand([
+        ({"a": 1}, ("a",), 1),
+        ({"a": {"b": 2}}, ("a",), {"b": 2}),
+        ({"a": {"b": 2}}, ("a", "b"), 2)
+    ])
+    def test_access_nested_map(self, nested_map, path, expected):
+        ''' test access nested map '''
+        self.assertEqual(access_nested_map(nested_map, path), expected)
 
-By the end of this project, you should be able to:
-- Understand the difference between unit and integration tests.
-- Apply common testing patterns like mocking, parameterization, and fixtures.
-- Write and execute tests using the `unittest` framework.
-- Use the `parameterized` library to simplify repetitive test cases.
+    @parameterized.expand([
+        ({}, ("a",)),
+        ({"a": 1}, ("a", "b"))
+    ])
+    def test_access_nested_map_exception(self, nested_map, path):
+        ''' test exception'''
+        with self.assertRaises(KeyError):
+            access_nested_map(nested_map, path)
 
-Requirements
 
-- Python 3.7
-- Ubuntu 18.04 LTS
-- All Python files should follow the `pycodestyle` style guide (version 2.5).
-- Each file must end with a newline.
-- The first line of every file should be `#!/usr/bin/env python3`.
-- All code should be executable.
-- Every module, class, and function should include documentation.
-- Functions and coroutines must have type annotations.
+class TestGetJson(unittest.TestCase):
+    ''' get json unittest '''
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False})
+    ])
+    def test_get_json(self, test_url, test_payload):
+        ''' self descriptive'''
+        class Mocked(Mock):
+            ''' mocked class'''
+
+            def json(self):
+                ''' json method mocked'''
+                return test_payload
+
+        with patch('requests.get') as MockClass:
+            MockClass.return_value = Mocked()
+            self.assertEqual(get_json(test_url), test_payload)
+
+
+class TestMemoize(unittest.TestCase):
+    ''' memoize unittest '''
+
+    def test_memoize(self):
+        ''' memoize test '''
+
+        class TestClass:
+            ''' self descriptive'''
+
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(TestClass, 'a_method') as mocked:
+            spec = TestClass()
+            spec.a_property
+            spec.a_property
+            mocked.asset_called_once()
 
 
 
