@@ -1,8 +1,5 @@
 -- SQL script to list all bands with Glam rock as their main style, ranked by their longevity
 
--- Ensure the table metal_bands is imported
--- Assuming the table metal_bands has columns: band_name, formed, split, and style
-
 -- Select band_name and calculate lifespan
 SELECT
     band_name,
@@ -10,7 +7,7 @@ SELECT
 FROM
     metal_bands
 WHERE
-    style LIKE 'Glam rock%' -- Check if Glam rock is the main style
+    style = 'Glam rock' -- Ensure the main style is exactly 'Glam rock'
 ORDER BY
     lifespan DESC; -- Order by longevity in descending order
 
